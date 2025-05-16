@@ -102,7 +102,7 @@ jobs:
 
 
       - name: Configure build options
-        working-directory: $env:work_directory/include/wx/msw
+        working-directory: ${{ env.work_directory }}/include/wx/msw
         run: |
             $use_utf8 = "${{ matrix.use_utf8 }}" ? 1 : 0
             if ( $use_utf8 ) {
