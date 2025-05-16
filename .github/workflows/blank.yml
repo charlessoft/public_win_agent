@@ -134,6 +134,22 @@ jobs:
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_${{ matrix.platform }}_lib ./package/
+          
+      - name: Package and Upload Artifacts
+        run: |
+          mkdir -p package
+          mv ./include ./package/
+          if [ "${{ matrix.platform }}" == "Win32" ]; then
+            mv ./lib/vc_lib ./package/
+          else
+            mv ./lib/vc_x64_lib ./package/
+          fi
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vc_lib_${{ matrix.configuration | toLower }}_${{ matrix.platform | toLower }}
+          path: package
 
       # - name: Upload artifact
       #   uses: actions/upload-artifact@v4
