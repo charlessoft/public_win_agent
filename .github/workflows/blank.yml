@@ -27,6 +27,8 @@ jobs:
           - configuration: 'Release'
             platform: 'x64'
             vsversion: 2019
+    env:
+      work_directory: wxWidgets  # 设置环境变量
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,13 +97,14 @@ jobs:
         shell: pwsh
         run: |
           $env:GIT_TRACE = "1"
-          git clone git@github.com:charlessoft/wxWidgets-3.2.6.git .
+          git clone git@github.com:charlessoft/wxWidgets-3.2.6.git  $env:work_directory
 
 
 
       - name: Configure build options
-        working-directory: include/wx/msw
+        working-directory: $env:work_directory/include/wx/msw
         run: |
+            cd wxWidgets
             $use_utf8 = "${{ matrix.use_utf8 }}" ? 1 : 0
             if ( $use_utf8 ) {
               $txt = Get-Content setup.h
@@ -115,6 +118,7 @@ jobs:
             vs-prerelease: true
 
       - name: Build
+        working-directory: $env:work_directory/
         run: |
             msbuild /noLogo /m '/p:Configuration=${{ matrix.configuration }}' /p:Platform=${{ matrix.platform }} build\msw\wx_vc16.sln
             if ( '${{ matrix.configuration }}'.IndexOf('DLL') -ne -1 ) {
