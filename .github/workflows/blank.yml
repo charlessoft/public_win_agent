@@ -95,7 +95,7 @@ jobs:
         shell: pwsh
         run: |
           $env:GIT_TRACE = "1"
-          git clone git@github.com:charlessoft/wxWidgets-3.2.6.git
+          git clone git@github.com:charlessoft/wxWidgets-3.2.6.git .
 
 
 
