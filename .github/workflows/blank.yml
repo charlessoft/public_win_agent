@@ -91,11 +91,6 @@ jobs:
           $config | Out-File -FilePath $HOME\.dding\config.json -Encoding utf8
 
 
-      # - name: Set up proxy
-      #   run: |
-      #     git config --global http.proxy socks5://python:psdemo982@123.60.164.114:11654
-
-
       - name: Clone repository from Gitee with trace
         shell: pwsh
         run: |
