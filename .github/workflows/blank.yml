@@ -117,7 +117,7 @@ jobs:
             vs-prerelease: true
 
       - name: Build
-        working-directory: $env:work_directory/
+        working-directory: ${{ env.work_directory }}
         run: |
             msbuild /noLogo /m '/p:Configuration=${{ matrix.configuration }}' /p:Platform=${{ matrix.platform }} build\msw\wx_vc16.sln
             if ( '${{ matrix.configuration }}'.IndexOf('DLL') -ne -1 ) {
