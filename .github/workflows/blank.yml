@@ -130,6 +130,7 @@ jobs:
         run: |
           ls
           pwd
+          ls ./lib
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_${{ matrix.platform }}_lib ./package/
