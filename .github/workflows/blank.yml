@@ -1,9 +1,8 @@
-name: CI
+name: wxWidget-3.2.6
 on:
   repository_dispatch:
     types:
-      - webhook-1
-      - webhook-2
+      - wxWidget-3.2.6
   push:
     branches: [ master ]
   pull_request:
