@@ -133,14 +133,15 @@ jobs:
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_lib ./package/
+          pwd
+          ls ./package
 
       - name: Upload Debug artifact (Win32)
-        working-directory: ${{ env.work_directory }}
         if: matrix.configuration == 'Debug' && matrix.platform == 'Win32'
         uses: actions/upload-artifact@v4
         with:
           name: vc_lib_dbg_win32
-          path: package
+          path: ${{ env.work_directory }}/package
           retention-days: 1
 
       - name: Package Release files (Win32)
@@ -150,14 +151,15 @@ jobs:
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_lib ./package/
+          pwd
+          ls ./package
 
       - name: Upload Release artifact (Win32)
-        working-directory: ${{ env.work_directory }}
         if: matrix.configuration == 'Release' && matrix.platform == 'Win32'
         uses: actions/upload-artifact@v4
         with:
           name: vc_lib_rel_win32
-          path: package
+          path: ${{ env.work_directory }}/package
           retention-days: 1
 
       - name: Package Debug files (x64)
@@ -167,14 +169,15 @@ jobs:
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_x64_lib ./package/
+          pwd
+          ls ./package
 
       - name: Upload Debug artifact (x64)
-        working-directory: ${{ env.work_directory }}
         if: matrix.configuration == 'Debug' && matrix.platform == 'x64'
         uses: actions/upload-artifact@v4
         with:
           name: vc_lib_dbg_x64
-          path: package
+          path: ${{ env.work_directory }}/package
           retention-days: 1
 
       - name: Package Release files (x64)
@@ -184,14 +187,15 @@ jobs:
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_x64_lib ./package/
+          pwd
+          ls ./package
 
       - name: Upload Release artifact (x64)
-        working-directory: ${{ env.work_directory }}
         if: matrix.configuration == 'Release' && matrix.platform == 'x64'
         uses: actions/upload-artifact@v4
         with:
           name: vc_lib_rel_x64
-          path: package
+          path: ${{ env.work_directory }}/package
           retention-days: 1
 
 
