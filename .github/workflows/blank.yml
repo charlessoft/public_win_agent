@@ -127,12 +127,12 @@ jobs:
             }
 
       - name: Package Debug files (Win32)
-          working-directory: ${{ env.work_directory }}
-          if: matrix.configuration == 'Debug' && matrix.platform == 'Win32'
-          run: |
-            mkdir -p package
-            mv ./include ./package/
-            mv ./lib/vc_lib ./package/
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Debug' && matrix.platform == 'Win32'
+        run: |
+          mkdir -p package
+          mv ./include ./package/
+          mv ./lib/vc_lib ./package/
 
       - name: Upload Debug artifact (Win32)
         working-directory: ${{ env.work_directory }}
