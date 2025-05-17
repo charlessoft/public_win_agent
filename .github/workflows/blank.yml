@@ -224,7 +224,7 @@ jobs:
 
 
       - name: Download Artifacts
-        working-directory: ${{ env.work_directory }}
+        
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
