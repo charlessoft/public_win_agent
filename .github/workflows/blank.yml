@@ -125,32 +125,150 @@ jobs:
                 Write-Output "Adding $dlldir to the PATH"
                 $dlldir | Out-File -Append $env:GITHUB_PATH
             }
-      - name: Package files
-        working-directory: ${{ env.work_directory }}
-        run: |
-          ls
-          pwd
-          ls ./lib
-          mkdir -p package
-          mv ./include ./package/
-          mv ./lib/vc_${{ matrix.platform }}_lib ./package/
 
-      - name: Package and Upload Artifacts
-        run: |
-          mkdir -p package
-          mv ./include ./package/
-          if [ "${{ matrix.platform }}" == "Win32" ]; then
+      - name: Package Debug files (Win32)
+          working-directory: ${{ env.work_directory }}
+          if: matrix.configuration == 'Debug' && matrix.platform == 'Win32'
+          run: |
+            mkdir -p package
+            mv ./include ./package/
             mv ./lib/vc_lib ./package/
-          else
-            mv ./lib/vc_x64_lib ./package/
-          fi
 
-      - name: Upload Artifact
+      - name: Upload Debug artifact (Win32)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Debug' && matrix.platform == 'Win32'
         uses: actions/upload-artifact@v4
         with:
-          name: vc_lib_${{ lower(matrix.configuration) }}_${{ lower(matrix.platform) }}
-          path: ${{env.work_directory}}/package
+          name: vc_lib_dbg_win32
+          path: package
           retention-days: 1
+
+      - name: Package Release files (Win32)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Release' && matrix.platform == 'Win32'
+        run: |
+          mkdir -p package
+          mv ./include ./package/
+          mv ./lib/vc_lib ./package/
+
+      - name: Upload Release artifact (Win32)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Release' && matrix.platform == 'Win32'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vc_lib_rel_win32
+          path: package
+          retention-days: 1
+
+      - name: Package Debug files (x64)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Debug' && matrix.platform == 'x64'
+        run: |
+          mkdir -p package
+          mv ./include ./package/
+          mv ./lib/vc_x64_lib ./package/
+
+      - name: Upload Debug artifact (x64)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Debug' && matrix.platform == 'x64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vc_lib_dbg_x64
+          path: package
+          retention-days: 1
+
+      - name: Package Release files (x64)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Release' && matrix.platform == 'x64'
+        run: |
+          mkdir -p package
+          mv ./include ./package/
+          mv ./lib/vc_x64_lib ./package/
+
+      - name: Upload Release artifact (x64)
+        working-directory: ${{ env.work_directory }}
+        if: matrix.configuration == 'Release' && matrix.platform == 'x64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vc_lib_rel_x64
+          path: package
+          retention-days: 1
+
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: msw-msvs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: echo "RELEASE_DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Install GitHub CLI
+        uses: sersoft-gmbh/setup-gh-cli-action@v2
+
+      - name: Delete existing release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete $RELEASE_DATE --yes || true
+
+      - name: Create new release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create $RELEASE_DATE -t "Release $RELEASE_DATE" -n "Automated release for $RELEASE_DATE"
+
+
+      - name: Download Artifacts
+        working-directory: ${{ env.work_directory }}
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Compress Artifacts
+        working-directory: ${{ env.work_directory }}
+        run: |
+          cd ./artifacts/vc_lib_dbg_win32
+          zip -r ../vc_lib_dbg_win32.zip ./*
+
+          cd ../vc_lib_rel_win32
+          zip -r ../vc_lib_rel_win32.zip ./*
+
+          cd ../vc_lib_dbg_x64
+          zip -r ../vc_lib_dbg_x64.zip ./*
+
+          cd ../vc_lib_rel_x64
+          zip -r ../vc_lib_rel_x64.zip ./*
+
+
+          # zip -r ./vc_lib_dbg_win32.zip ./vc_lib_dbg_win32
+          # zip -r ./vc_lib_rel_win32.zip ./vc_lib_rel_win32
+          # zip -r ./vc_lib_dbg_x64.zip ./vc_lib_dbg_x64
+          # zip -r ./vc_lib_rel_x64.zip ./vc_lib_rel_x64
+
+      - name: Generate MD5 Checksums
+        working-directory: ${{ env.work_directory }}
+        run: |
+          > ./artifacts/filelist.txt  # 清空或创建 filelist.txt 文件
+          for file in ./artifacts/*.zip; do
+            # Calculate MD5 checksum
+            md5sum=$(md5sum "$file" | awk '{ print $1 }')
+
+            # Write to filelist.txt
+            echo "$(basename "$file") | ${md5sum}" >> ./artifacts/filelist.txt
+          done
+
+      - name: Upload Artifacts to Release
+        working-directory: ${{ env.work_directory }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd ./artifacts
+          gh release upload $RELEASE_DATE ./vc_lib_dbg_win32.zip
+          gh release upload $RELEASE_DATE ./vc_lib_rel_win32.zip
+          gh release upload $RELEASE_DATE ./vc_lib_dbg_x64.zip
+          gh release upload $RELEASE_DATE ./vc_lib_rel_x64.zip
+          gh release upload $RELEASE_DATE ./filelist.txt
 
       # - name: Upload artifact
       #   uses: actions/upload-artifact@v4
