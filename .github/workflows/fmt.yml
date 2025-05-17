@@ -33,6 +33,8 @@ jobs:
           - { platform: x64, toolset: v141, shared: -DBUILD_SHARED_LIBS=ON }
           - { platform: x64, standard: 14, shared: -DBUILD_SHARED_LIBS=ON }
           - { platform: x64, standard: 20, shared: -DBUILD_SHARED_LIBS=ON }
+    env:
+      work_directory: fmt  # 设置环境变量
         # include:
         #   - os: windows-2022
         #     platform: x64
@@ -114,12 +116,13 @@ jobs:
         run: tzutil /s "FLE Standard Time"
 
       - name: Create Build Environment
+        working-directory: ${{ env.work_directory }}
         run: cmake -E make_directory ${{runner.workspace}}/build
 
       - name: Configure
         # Use a bash shell for $GITHUB_WORKSPACE.
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{ env.work_directory }}/build
         run: |
           cmake -A ${{matrix.platform}} -T ${{matrix.toolset}} \
                 -DCMAKE_CXX_STANDARD=${{matrix.standard}} \
@@ -127,7 +130,7 @@ jobs:
                 $GITHUB_WORKSPACE
 
       - name: Build
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{ env.work_directory }}/build
         run: |
           $threads = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
           cmake --build . --config ${{matrix.build_type}} --parallel $threads
@@ -137,7 +140,7 @@ jobs:
         if: always()  # Ensure this step always runs to upload artifacts
         with:
           name: ${{ matrix.platform }}-${{ matrix.toolset }}-${{ matrix.build_type }}-${{ matrix.standard }}
-          path: package
+          path: ${{ env.work_directory }}/package
     # - name: Test
     #   working-directory: ${{runner.workspace}}/build
     #   run: ctest -C ${{matrix.build_type}} -V
