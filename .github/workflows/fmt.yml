@@ -42,9 +42,9 @@ jobs:
 
     steps:
       - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            submodules: 'recursive'
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
      - name: Setup SSH
        uses: webfactory/ssh-agent@v0.5.3
