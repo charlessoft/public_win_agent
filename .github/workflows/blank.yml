@@ -6,7 +6,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]  
+    branches: [ master ]
 jobs:
   msw-msvs:
     runs-on: windows-${{ matrix.vsversion }}
@@ -44,7 +44,7 @@ jobs:
           ssh-keyscan gitee.com >> ~/.ssh/known_hosts
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    
+
       - uses: lukka/get-cmake@latest
 
       - uses: actions/checkout@v3
@@ -72,7 +72,7 @@ jobs:
               }
           ]
           EOF
-      
+
       - name: Install dding on Windows
         if: runner.os == 'Windows'
         shell: pwsh
@@ -134,7 +134,7 @@ jobs:
           mkdir -p package
           mv ./include ./package/
           mv ./lib/vc_${{ matrix.platform }}_lib ./package/
-          
+
       - name: Package and Upload Artifacts
         run: |
           mkdir -p package
@@ -144,12 +144,13 @@ jobs:
           else
             mv ./lib/vc_x64_lib ./package/
           fi
-          
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vc_lib_${{ matrix.configuration | toLower }}_${{ matrix.platform | toLower }}
-          path: package
+          name: vc_lib_${{ lower(matrix.configuration) }}_${{ lower(matrix.platform) }}
+          path: ${{env.work_directory}}/package
+          retention-days: 1
 
       # - name: Upload artifact
       #   uses: actions/upload-artifact@v4
@@ -192,18 +193,18 @@ jobs:
   #         for dir in vc_lib_dbg_win32 vc_lib_rel_win32 vc_lib_dbg_x64 vc_lib_rel_x64; do
   #           zip -r "${dir}.zip" "./${dir}"
   #         done
-  
+
   #     - name: Generate MD5 Checksums
   #       run: |
   #         > ./artifacts/filelist.txt  # 清空或创建 filelist.txt 文件
   #         for file in ./artifacts/*.zip; do
   #           # Calculate MD5 checksum
   #           md5sum=$(md5sum "$file" | awk '{ print \$1 }')
-            
+
   #           # Write to filelist.txt
   #           echo "$(basename "$file") | ${md5sum}" >> ./artifacts/filelist.txt
   #         done
-  
+
   #     - name: Upload Artifacts to Release
   #       env:
   #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -216,7 +217,7 @@ jobs:
 
 
 
-        
+
       # - name: Download Artifacts
       #   uses: actions/download-artifact@v4
       #   with:
@@ -226,7 +227,7 @@ jobs:
       #   run: |
       #     cd ./artifacts/vc_lib_dbg_win32
       #     zip -r ../vc_lib_dbg_win32.zip ./*
-          
+
       #     cd ../vc_lib_rel_win32
       #     zip -r ../vc_lib_rel_win32.zip ./*
 
@@ -235,8 +236,8 @@ jobs:
 
       #     cd ../vc_lib_rel_x64
       #     zip -r ../vc_lib_rel_x64.zip ./*
-          
-          
+
+
       #     # zip -r ./vc_lib_dbg_win32.zip ./vc_lib_dbg_win32
       #     # zip -r ./vc_lib_rel_win32.zip ./vc_lib_rel_win32
       #     # zip -r ./vc_lib_dbg_x64.zip ./vc_lib_dbg_x64
@@ -248,11 +249,11 @@ jobs:
       #     for file in ./artifacts/*.zip; do
       #       # Calculate MD5 checksum
       #       md5sum=$(md5sum "$file" | awk '{ print $1 }')
-            
+
       #       # Write to filelist.txt
       #       echo "$(basename "$file") | ${md5sum}" >> ./artifacts/filelist.txt
       #     done
-          
+
       # - name: Upload Artifacts to Release
       #   env:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
