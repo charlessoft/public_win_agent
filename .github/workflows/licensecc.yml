@@ -28,7 +28,7 @@ jobs:
             platform: 'x64'
             vsversion: 2019
     env:
-      work_directory: wxWidgets  # 设置环境变量
+      work_directory: licensecc  # 设置环境变量
     steps:
       - name: Checkout
         uses: actions/checkout@v4
