@@ -8,33 +8,21 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  msw-msvs:
-    runs-on: windows-${{ matrix.vsversion }}
-    name: wxMSW vs${{ matrix.vsversion }} ${{ matrix.configuration }} ${{ matrix.platform }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - configuration: 'Debug'
-            platform: 'Win32'
-            vsversion: 2019
-          - configuration: 'Release'
-            platform: 'Win32'
-            vsversion: 2019
-          - configuration: 'Debug'
-            platform: 'x64'
-            vsversion: 2019
-          - configuration: 'Release'
-            platform: 'x64'
-            vsversion: 2019
-    env:
-      work_directory: licensecc  # 设置环境变量
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
+  build-windows:
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          build_type: ["Debug", "Release"]
+          os: [ "windows-2016"]
+          static: ["true"]
 
+      steps:
+      -  uses: actions/checkout@v1
+      -  name: Setup 
+         shell: bash
+         run: env
+         
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
@@ -43,58 +31,99 @@ jobs:
         run: |
           ssh-keyscan gitee.com >> ~/.ssh/known_hosts
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-
-      - uses: lukka/get-cmake@latest
-
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: Install dding on non-Windows
-        if: runner.os != 'Windows'
-        run: |
-          pip install dding
-          mkdir -p ~/.dding
-          dding_secret="${{ github.event.client_payload.dding_secret || env.DEFAULT_DDING_SECRET }}"
-          dding_token="${{ github.event.client_payload.dding_token || env.DEFAULT_DDING_TOKEN }}"
-          cat <<EOF > ~/.dding/config.json
-          [
-              {
-                  "group": "default",
-                  "secret": "$dding_secret",
-                  "token": "$dding_token"
-              }
-          ]
-          EOF
-
-      - name: Install dding on Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          pip install dding
-          New-Item -Path $HOME\.dding -ItemType Directory -Force
-          $dding_secret = "${{ github.event.client_payload.dding_secret || env.DEFAULT_DDING_SECRET }}"
-          $dding_token = "${{ github.event.client_payload.dding_token || env.DEFAULT_DDING_TOKEN }}"
-          $config = @"
-          [
-              {
-                  "group": "default",
-                  "secret": "$dding_secret",
-                  "token": "$dding_token"
-              }
-          ]
-          "@
-          $config | Out-File -FilePath $HOME\.dding\config.json -Encoding utf8
-
-# 下载代码============================================
+      # 下载代码============================================
       - name: Clone repository from Gitee with trace
         shell: pwsh
         run: |
           $env:GIT_TRACE = "1"
-          git clone git@github.com:charlessoft/licensecc_2.0.0.git  $env:work_directory
+          git clone git@github.com:charlessoft/licensecc_2.0.0.git  licensecc
+          
+      -  name: install boost boost-msvc-14.2
+         shell: bash
+         if: ${{ matrix.os == 'windows-2019' }}
+         run: |
+            choco install -y boost-msvc-14.2 --version 1.74.0
+            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
+      -  name: install boost boost-msvc-14.1
+         shell: bash
+         if: ${{ matrix.os == 'windows-2016' }}
+         run: |
+            choco install -y boost-msvc-14.1 --version 1.74.0
+            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV     
+      -  name: Compile
+         run: |
+            cd licensecc/build
+            cmake .. -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DLCC_PROJECT_NAME:STRING=test -DCMAKE_INSTALL_PREFIX=C:/licensecc
+            cmake --build . --target install --config ${{ matrix.build_type }}
+         shell: bash
+      - name: List installed files
+        run: |
+          echo "Listing files in C:/licensecc:"
+          ls -R C:/licensecc
+        shell: bash
+    # env:
+    #   work_directory: licensecc  # 设置环境变量
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v4
+    #     with:
+    #       submodules: 'recursive'
+
+    #   - name: Setup SSH
+    #     uses: webfactory/ssh-agent@v0.5.3
+    #     with:
+    #       ssh-private-key: ${{ secrets.SSH_GITEE_PRIVATE_KEY }}
+    #   - name: Add Gitee to known hosts
+    #     run: |
+    #       ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+    #       ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+
+    #   - uses: lukka/get-cmake@latest
+
+    #   - uses: actions/checkout@v3
+    #     with:
+    #       submodules: recursive
+
+    #   - name: Set up Python
+    #     uses: actions/setup-python@v2
+    #     with:
+    #       python-version: '3.8'
+
+    #   - name: Install dding on non-Windows
+    #     if: runner.os != 'Windows'
+    #     run: |
+    #       pip install dding
+    #       mkdir -p ~/.dding
+    #       dding_secret="${{ github.event.client_payload.dding_secret || env.DEFAULT_DDING_SECRET }}"
+    #       dding_token="${{ github.event.client_payload.dding_token || env.DEFAULT_DDING_TOKEN }}"
+    #       cat <<EOF > ~/.dding/config.json
+    #       [
+    #           {
+    #               "group": "default",
+    #               "secret": "$dding_secret",
+    #               "token": "$dding_token"
+    #           }
+    #       ]
+    #       EOF
+
+    #   - name: Install dding on Windows
+    #     if: runner.os == 'Windows'
+    #     shell: pwsh
+    #     run: |
+    #       pip install dding
+    #       New-Item -Path $HOME\.dding -ItemType Directory -Force
+    #       $dding_secret = "${{ github.event.client_payload.dding_secret || env.DEFAULT_DDING_SECRET }}"
+    #       $dding_token = "${{ github.event.client_payload.dding_token || env.DEFAULT_DDING_TOKEN }}"
+    #       $config = @"
+    #       [
+    #           {
+    #               "group": "default",
+    #               "secret": "$dding_secret",
+    #               "token": "$dding_token"
+    #           }
+    #       ]
+    #       "@
+    #       $config | Out-File -FilePath $HOME\.dding\config.json -Encoding utf8
+
+
