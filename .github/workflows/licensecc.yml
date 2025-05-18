@@ -37,7 +37,11 @@ jobs:
         run: |
           $env:GIT_TRACE = "1"
           git clone git@github.com:charlessoft/licensecc_2.0.0.git  licensecc
-          
+      - name: download boost
+        shell: bash
+        run: |
+          wget https://master.dl.sourceforge.net/project/boost/boost-binaries/1.71.0/boost_1_71_0-bin-msvc-all-32-64.7z?viasf=1
+           
       -  name: install boost boost-msvc-14.2
          shell: bash
          if: ${{ matrix.os == 'windows-2019' }}
