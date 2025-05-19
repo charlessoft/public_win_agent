@@ -1,8 +1,6 @@
 name: windows
 
 on:
-  push:
-  pull_request:
   repository_dispatch:
     types:
       - fmt_11.2.0
