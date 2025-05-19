@@ -4,9 +4,9 @@ on:
     types:
       - wxWidget-3.2.6
   push:
-    branches: [ master ]
+    branches: [ widget ]
   pull_request:
-    branches: [ master ]
+    branches: [ widget ]
 jobs:
   msw-msvs:
     runs-on: windows-${{ matrix.vsversion }}

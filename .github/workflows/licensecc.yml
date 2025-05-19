@@ -4,9 +4,9 @@ on:
     types:
       - licensecc
   push:
-    branches: [ master ]
+    branches: [ licensecc ]
   pull_request:
-    branches: [ master ]
+    branches: [ licensecc ]
 jobs:
   build-windows:
       runs-on: ${{ matrix.os }}
