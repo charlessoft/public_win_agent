@@ -13,9 +13,9 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          build_type: ["Debug", "Release"]
+          build_type: ["Debug"]
           os: [ "windows-2019"]
-          static: ["true"]
+          static: ["false"]
 
       steps:
       -  uses: actions/checkout@v1
@@ -48,12 +48,12 @@ jobs:
          run: |
             choco install -y boost-msvc-14.2 --version 1.74.0
             echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
-      -  name: install boost boost-msvc-14.1
-         shell: bash
-         if: ${{ matrix.os == 'windows-2016' }}
-         run: |
-            choco install -y boost-msvc-14.1 --version 1.74.0
-            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV     
+      # -  name: install boost boost-msvc-14.1
+      #    shell: bash
+      #    if: ${{ matrix.os == 'windows-2016' }}
+      #    run: |
+      #       choco install -y boost-msvc-14.1 --version 1.74.0
+      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV     
       -  name: Compile
          run: |
             cd licensecc/build
