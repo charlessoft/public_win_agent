@@ -55,6 +55,7 @@ jobs:
       -  name: DownLoad Primary
          shell: bash
          run: |
+           choco install wget
            mkdir licensecc/QuickPrint
            wget -o licensecc/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/id_rsa
            ls licensecc/QuickPrint
