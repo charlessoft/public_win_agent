@@ -39,12 +39,12 @@ jobs:
           git clone git@github.com:charlessoft/licensecc_2.0.0.git  licensecc
       
            
-      -  name: install boost boost-msvc-14.2
-         shell: bash
-         if: ${{ matrix.os == 'windows-2019' }}
-         run: |
-            choco install -y boost-msvc-14.2 --version 1.74.0
-            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
+      # -  name: install boost boost-msvc-14.2
+      #    shell: bash
+      #    if: ${{ matrix.os == 'windows-2019' }}
+      #    run: |
+      #       choco install -y boost-msvc-14.2 --version 1.74.0
+      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
 
       
       -  name: DownLoad Primary
@@ -56,12 +56,17 @@ jobs:
            ls licensecc/QuickPrint
       
          
-      -  name: Compile
-         run: |
-            cd licensecc/build
-            cmake .. -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
-            cmake --build . --target install --config ${{ matrix.build_type }}
-         shell: bash
+      # -  name: Compile
+      #    run: |
+      #       cd licensecc/build
+      #       cmake .. -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
+      #       cmake --build . --target install --config ${{ matrix.build_type }}
+      #    shell: bash
+      - name: test
+        run: |
+          mkdir C:/licensecc
+          echo "xxxx" >> C:/licensecc/1.txt
+          
       - name: List installed files
         run: |
           echo "Listing files in C:/licensecc:"
