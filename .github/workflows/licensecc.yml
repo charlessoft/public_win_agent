@@ -42,29 +42,35 @@ jobs:
       #   run: |
       #     wget https://master.dl.sourceforge.net/project/boost/boost-binaries/1.71.0/boost_1_71_0-bin-msvc-all-32-64.7z?viasf=1
            
-      -  name: install boost boost-msvc-14.2
-         shell: bash
-         if: ${{ matrix.os == 'windows-2019' }}
-         run: |
-            choco install -y boost-msvc-14.2 --version 1.74.0
-            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
-      # -  name: install boost boost-msvc-14.1
+      # -  name: install boost boost-msvc-14.2
       #    shell: bash
-      #    if: ${{ matrix.os == 'windows-2016' }}
+      #    if: ${{ matrix.os == 'windows-2019' }}
       #    run: |
-      #       choco install -y boost-msvc-14.1 --version 1.74.0
-      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV     
-      -  name: Compile
-         run: |
-            cd licensecc/build
-            cmake .. -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DLCC_PROJECT_NAME:STRING=test -DCMAKE_INSTALL_PREFIX=C:/licensecc
-            cmake --build . --target install --config ${{ matrix.build_type }}
+      #       choco install -y boost-msvc-14.2 --version 1.74.0
+      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
+
+      
+
+
+      -  name: DownLoad Primary
          shell: bash
-      - name: List installed files
-        run: |
-          echo "Listing files in C:/licensecc:"
-          ls -R C:/licensecc
-        shell: bash
+         run: |
+           mkdir licensecc/QuickPrint
+           wget -o licensecc/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/id_rsa
+           ls licensecc/QuickPrint
+      
+         
+      # -  name: Compile
+      #    run: |
+      #       cd licensecc/build
+      #       cmake .. -A x64 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
+      #       cmake --build . --target install --config ${{ matrix.build_type }}
+      #    shell: bash
+      # - name: List installed files
+      #   run: |
+      #     echo "Listing files in C:/licensecc:"
+      #     ls -R C:/licensecc
+      #   shell: bash
     # env:
     #   work_directory: licensecc  # 设置环境变量
     # steps:
