@@ -37,23 +37,23 @@ jobs:
         run: |
           $env:GIT_TRACE = "1"
           git clone git@github.com:charlessoft/licensecc_2.0.0.git  licensecc
-      - name: download boost
-        shell: bash
-        run: |
-          wget https://master.dl.sourceforge.net/project/boost/boost-binaries/1.71.0/boost_1_71_0-bin-msvc-all-32-64.7z?viasf=1
+      # - name: download boost
+      #   shell: bash
+      #   run: |
+      #     wget https://master.dl.sourceforge.net/project/boost/boost-binaries/1.71.0/boost_1_71_0-bin-msvc-all-32-64.7z?viasf=1
            
-      # -  name: install boost boost-msvc-14.2
-      #    shell: bash
-      #    if: ${{ matrix.os == 'windows-2019' }}
-      #    run: |
-      #       choco install -y boost-msvc-14.2 --version 1.74.0
-      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
-      # -  name: install boost boost-msvc-14.1
-      #    shell: bash
-      #    if: ${{ matrix.os == 'windows-2016' }}
-      #    run: |
-      #       choco install -y boost-msvc-14.1 --version 1.74.0
-      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV     
+      -  name: install boost boost-msvc-14.2
+         shell: bash
+         if: ${{ matrix.os == 'windows-2019' }}
+         run: |
+            choco install -y boost-msvc-14.2 --version 1.74.0
+            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
+      -  name: install boost boost-msvc-14.1
+         shell: bash
+         if: ${{ matrix.os == 'windows-2016' }}
+         run: |
+            choco install -y boost-msvc-14.1 --version 1.74.0
+            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV     
       -  name: Compile
          run: |
             cd licensecc/build
