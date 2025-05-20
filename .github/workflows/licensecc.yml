@@ -66,12 +66,12 @@ jobs:
           choco install base64
           mkdir licensecc/projects/QuickPrint
           # Decode the Base64 encoded RSA content and save it to a file
-          echo "${{ github.event.client_payload.rsa_content }}"
+          # echo "${{ github.event.client_payload.rsa_content }}"
           echo "${{ github.event.client_payload.rsa_content }}" | base64 -d > licensecc/projects/QuickPrint/private_key.rsa
       
           # Verify the file content
           ls licensecc/projects/QuickPrint
-          cat licensecc/projects/QuickPrint/private_key.rsa
+          # cat licensecc/projects/QuickPrint/private_key.rsa
           
       # -  name: DownLoad Primary
       #    shell: bash
@@ -90,10 +90,7 @@ jobs:
       -  name: Compile
          run: |
             cd licensecc/build
-            
             cmake .. -A x64 -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=TRUE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DBOOST_ROOT="C:\local\boost_1_74_0" -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
-
-
             # echo "down pacth=========================>"
             # wget -O ../extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
             # wget -O ../extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
