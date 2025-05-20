@@ -105,11 +105,11 @@ jobs:
         shell: bash
 
 
-      - name: List installed files222
-        run: |
-          echo "licensecc"
-          ls  C:/12.obj
-        shell: bash  
+      # - name: List installed files222
+      #   run: |
+      #     echo "licensecc"
+      #     ls  C:/12.obj
+      #   shell: bash  
 
           
       - name: Upload Debug artifact (x64)
