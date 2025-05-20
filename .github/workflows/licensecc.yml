@@ -77,8 +77,8 @@ jobs:
 
 
             echo "down pacth=========================>"
-            wget -O licensecc/extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
-            wget -O licensecc/extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
+            wget -O ../extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
+            wget -O ../extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
             echo "down pacth=========================>end  "
             
             cmake --build . --target install --config ${{ matrix.build_type }}
