@@ -65,14 +65,15 @@ jobs:
          run: |
            choco install wget
            mkdir licensecc/projects/QuickPrint
-           wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/id_rsa
-           ls licensecc/projects/QuickPrint
-           cat licensecc/projects/QuickPrint/private_key.rsa
+           # wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/id_rsa
+           # ls licensecc/projects/QuickPrint
+           # cat licensecc/projects/QuickPrint/private_key.rsa
       
          
       -  name: Compile
          run: |
             cd licensecc/build
+            
             cmake .. -A x64 -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=TRUE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DBOOST_ROOT="C:\local\boost_1_74_0" -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
 
 
