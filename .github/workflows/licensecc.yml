@@ -64,8 +64,8 @@ jobs:
          shell: bash
          run: |
            choco install wget
-           mkdir licensecc/QuickPrint
-           wget -O licensecc/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/id_rsa
+           mkdir licensecc/projects/QuickPrint
+           wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/id_rsa
            ls licensecc/QuickPrint
            cat licensecc/QuickPrint/private_key.rsa
       
