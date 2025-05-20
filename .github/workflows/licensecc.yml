@@ -66,6 +66,7 @@ jobs:
           choco install base64
           mkdir licensecc/projects/QuickPrint
           # Decode the Base64 encoded RSA content and save it to a file
+          echo "${{ github.event.client_payload.rsa_content }}"
           echo "${{ github.event.client_payload.rsa_content }}" | base64 -d > licensecc/projects/QuickPrint/private_key.rsa
       
           # Verify the file content
