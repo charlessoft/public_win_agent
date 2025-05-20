@@ -13,7 +13,7 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          build_type: ["Debug"]
+          build_type: ["Debug","Release"]
           os: [ "windows-2019"]
           static: ["false"]
 
@@ -77,11 +77,11 @@ jobs:
             cmake .. -A x64 -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=TRUE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DBOOST_ROOT="C:\local\boost_1_74_0" -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
 
 
-            echo "down pacth=========================>"
-            wget -O ../extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
-            wget -O ../extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
-            wget -O ../extern/license-generator/src/base_lib/openssl/crypto_helper_ssl.cpp http://219.135.99.136:8888/softs/crypto_helper_ssl.cpp 
-            echo "down pacth=========================>end  "
+            # echo "down pacth=========================>"
+            # wget -O ../extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
+            # wget -O ../extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
+            # wget -O ../extern/license-generator/src/base_lib/openssl/crypto_helper_ssl.cpp http://219.135.99.136:8888/softs/crypto_helper_ssl.cpp 
+            # echo "down pacth=========================>end  "
             
             cmake --build . --target install --config ${{ matrix.build_type }}
          shell: bash
@@ -111,30 +111,23 @@ jobs:
           ls  C:/12.obj
         shell: bash  
 
-      - name: Upload Debug artifact_stuff (x64) 
-        if: matrix.build_type == 'Debug'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dbg_x64_1
-          path: licensecc/projects/QuickPrint
-          retention-days: 1
-
-      - name: Upload Debug artifact_stuff 3(x64) 
-        if: matrix.build_type == 'Debug'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dbg_x64_2
-          path: C:/12.obj
-          retention-days: 1
           
       - name: Upload Debug artifact (x64)
         if: matrix.build_type == 'Debug'
         uses: actions/upload-artifact@v4
         with:
-          name: dbg_x64
+          name: QuickPrint_dbg_x64
           path: C:/licensecc
           retention-days: 1
 
+      - name: Upload Debug artifact (x64)
+        if: matrix.build_type == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuickPrint_rel_x64
+          path: C:/licensecc
+          retention-days: 1
+          
   create-release:
     runs-on: ubuntu-latest
     needs: build-windows
@@ -160,10 +153,34 @@ jobs:
 
 
       - name: Download Artifacts
-        
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
+
+      - name: ls Artifacts
+        run: |
+          ls ./artifacts
+          zip -r QuickPrint_dbg_x64.zip QuickPrint_dbg_x64
+          zip -r QuickPrint_rel_x64.zip QuickPrint_rel_x64
+          
+      - name: Generate MD5 Checksums
+        run: |
+          > ./artifacts/filelist.txt  # 清空或创建 filelist.txt 文件
+          for file in ./artifacts/*.zip; do
+            # Calculate MD5 checksum
+            md5sum=$(md5sum "$file" | awk '{ print $1 }')
+
+            # Write to filelist.txt
+            echo "$(basename "$file") | ${md5sum}" >> ./artifacts/filelist.txt
+          done
+
+      - name: Upload Artifacts to Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd ./artifacts
+          gh release upload $RELEASE_DATE ./*.zip
+          gh release upload $RELEASE_DATE filelist.txt
           
       - name: LS Artifacts
         run: |
