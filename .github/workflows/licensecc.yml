@@ -40,24 +40,24 @@ jobs:
       
 
            # 缓存Boost库
-      # - name: Cache Boost
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: C:/local/boost_1_74_0
-      #     key: ${{ runner.os }}-boost-1.74.0
-      #     restore-keys: |
-      #       ${{ runner.os }}-boost-
+      - name: Cache Boost
+        uses: actions/cache@v3
+        with:
+          path: C:/local/boost_1_74_0
+          key: ${{ runner.os }}-boost-1.74.0
+          restore-keys: |
+            ${{ runner.os }}-boost-
 
-      - name: Check Cache Hit
-        if: ${{ steps.cache.outputs.cache-hit == 'true' }}
-        run: echo "Cache hit for Boost. Skipping installation."  
+      # - name: Check Cache Hit
+      #   if: ${{ steps.cache.outputs.cache-hit == 'true' }}
+      #   run: echo "Cache hit for Boost. Skipping installation."  
         
-      -  name: install boost boost-msvc-14.2
-         shell: bash
-         if: ${{ matrix.os == 'windows-2019' && steps.cache.outputs.cache-hit != 'true' }}
-         run: |
-            choco install -y boost-msvc-14.2 --version 1.74.0
-            echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
+      # -  name: install boost boost-msvc-14.2
+      #    shell: bash
+      #    if: ${{ matrix.os == 'windows-2019' && steps.cache.outputs.cache-hit != 'true' }}
+      #    run: |
+      #       choco install -y boost-msvc-14.2 --version 1.74.0
+      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
 
       
       -  name: DownLoad Primary
