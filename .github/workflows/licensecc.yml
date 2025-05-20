@@ -120,7 +120,7 @@ jobs:
           path: C:/licensecc
           retention-days: 1
 
-      - name: Upload Debug artifact (x64)
+      - name: Upload Release artifact (x64)
         if: matrix.build_type == 'Release'
         uses: actions/upload-artifact@v4
         with:
