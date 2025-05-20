@@ -74,6 +74,13 @@ jobs:
          run: |
             cd licensecc/build
             cmake .. -A x64 -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=TRUE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DBOOST_ROOT="C:\local\boost_1_74_0" -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
+
+
+            echo "down pacth=========================>"
+            wget -O licensecc/extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
+            wget -O licensecc/extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
+            echo "down pacth=========================>end  "
+            
             cmake --build . --target install --config ${{ matrix.build_type }}
          shell: bash
          
