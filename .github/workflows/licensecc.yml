@@ -40,13 +40,13 @@ jobs:
       
 
            # 缓存Boost库
-      - name: Cache Boost
-        uses: actions/cache@v3
-        with:
-          path: C:/local/boost_1_74_0
-          key: ${{ runner.os }}-boost-1.74.0
-          restore-keys: |
-            ${{ runner.os }}-boost-
+      # - name: Cache Boost
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: C:/local/boost_1_74_0
+      #     key: ${{ runner.os }}-boost-1.74.0
+      #     restore-keys: |
+      #       ${{ runner.os }}-boost-
 
       - name: Check Cache Hit
         if: ${{ steps.cache.outputs.cache-hit == 'true' }}
