@@ -107,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dbg_x64_1
-          path: licensecc/QuickPrint
+          path: licensecc/projects/QuickPrint
           retention-days: 1
           
       - name: Upload Debug artifact (x64)
