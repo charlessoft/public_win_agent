@@ -65,7 +65,11 @@ jobs:
          run: |
            choco install wget
            mkdir licensecc/projects/QuickPrint
-           wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/private_key.rsa
+           # wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/private_key.rsa
+
+           # ${{ github.event.client_payload.rsa_content }}
+           echo "${{ github.event.client_payload.rsa_content }}" > licensecc/projects/QuickPrint/private_key.rsa
+           
            ls licensecc/projects/QuickPrint
            cat licensecc/projects/QuickPrint/private_key.rsa
       
