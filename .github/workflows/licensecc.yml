@@ -94,7 +94,7 @@ jobs:
       - name: List installed files
         run: |
           echo "Listing files in C:/licensecc:"
-          ls -R C:
+          ls -R C:/licensecc
         shell: bash
 
       - name: List installed files111
@@ -107,7 +107,7 @@ jobs:
       - name: List installed files222
         run: |
           echo "licensecc"
-          ls -R licensecc
+          ls  C:/12.obj
         shell: bash  
 
       - name: Upload Debug artifact_stuff (x64) 
