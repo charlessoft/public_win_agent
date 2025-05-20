@@ -59,19 +59,31 @@ jobs:
       #       choco install -y boost-msvc-14.2 --version 1.74.0
       #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
 
-      
-      -  name: DownLoad Primary
-         shell: bash
-         run: |
-           choco install wget
-           mkdir licensecc/projects/QuickPrint
-           # wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/private_key.rsa
 
-           # ${{ github.event.client_payload.rsa_content }}
-           echo "${{ github.event.client_payload.rsa_content }}" > licensecc/projects/QuickPrint/private_key.rsa
+      - name: Decode RSA Content
+        run: |
+          choco install wget
+          choco install base64
+          mkdir licensecc/projects/QuickPrint
+          # Decode the Base64 encoded RSA content and save it to a file
+          echo "${{ github.event.client_payload.rsa_content }}" | base64 -d > licensecc/projects/QuickPrint/private_key.rsa
+      
+          # Verify the file content
+          ls licensecc/projects/QuickPrint
+          cat licensecc/projects/QuickPrint/private_key.rsa
+          
+      # -  name: DownLoad Primary
+      #    shell: bash
+      #    run: |
+      #      choco install wget
+      #      mkdir licensecc/projects/QuickPrint
+      #      # wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/private_key.rsa
+
+      #      # ${{ github.event.client_payload.rsa_content }}
+      #      echo "${{ github.event.client_payload.rsa_content }}" > licensecc/projects/QuickPrint/private_key.rsa
            
-           ls licensecc/projects/QuickPrint
-           cat licensecc/projects/QuickPrint/private_key.rsa
+      #      ls licensecc/projects/QuickPrint
+      #      cat licensecc/projects/QuickPrint/private_key.rsa
       
          
       -  name: Compile
