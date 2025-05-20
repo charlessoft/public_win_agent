@@ -157,14 +157,17 @@ jobs:
         with:
           path: ./artifacts
 
-      - name: ls Artifacts
+      - name: zip Artifacts
         run: |
           ls ./artifacts
           cd ./artifacts/QuickPrint_dbg_x64
-          zip -r QuickPrint_dbg_x64.zip ./*
+          zip -r ../QuickPrint_dbg_x64.zip ./*
+          
           
           cd ../QuickPrint_rel_x64
-          zip -r QuickPrint_rel_x64.zip ./*
+          zip -r ../QuickPrint_rel_x64.zip ./*
+          
+          ls
           
           
       - name: Generate MD5 Checksums
