@@ -80,6 +80,7 @@ jobs:
       #   run: |
       #     mkdir C:/licensecc
       #     echo "xxxx" >> C:/licensecc/1.txt
+      
           
       - name: List installed files
         run: |
@@ -87,6 +88,20 @@ jobs:
           ls -R C:/licensecc
         shell: bash
 
+      - name: List installed files111
+        run: |
+          echo "licensecc"
+          ls -R licensecc
+        shell: bash
+
+      - name: Upload Debug artifact_stuff (x64) 
+        if: matrix.build_type == 'Debug'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbg_x64_1
+          path: licensecc/QuickPrint
+          retention-days: 1
+          
       - name: Upload Debug artifact (x64)
         if: matrix.build_type == 'Debug'
         uses: actions/upload-artifact@v4
