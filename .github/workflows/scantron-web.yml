@@ -1,0 +1,274 @@
+name: scantron-web
+on:
+  repository_dispatch:
+    types:
+      - scantron-web
+  # push:
+  #   branches: [ licensecc ]
+  # pull_request:
+  #   branches: [ licensecc ]
+jobs:
+  build-macos:
+      runs-on: macos-latest
+      # strategy:
+      #   fail-fast: false
+      #   matrix:
+      #     build_type: ["Debug","Release"]
+      #     os: [ "windows-2019"]
+      #     static: ["false"]
+
+      steps:
+      -  uses: actions/checkout@v1
+      -  name: Setup 
+         shell: bash
+         run: env
+         
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_GITEE_PRIVATE_KEY }}
+      - name: Add Gitee to known hosts
+        run: |
+          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # 下载代码============================================
+      - name: Clone repository from Gitee with trace
+        shell: pwsh
+        run: |
+          $env:GIT_TRACE = "1"
+          git clone git@github.com:charlessoft/scantron-web.git  scantron-web
+      
+
+           # 缓存Boost库
+      # - name: Cache Boost
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: C:/local/boost_1_74_0
+      #     key: ${{ runner.os }}-boost-1.74.0
+      #     restore-keys: |
+      #       ${{ runner.os }}-boost-
+
+      # - name: Check Cache Hit
+      #   if: ${{ steps.cache.outputs.cache-hit == 'true' }}
+      #   run: echo "Cache hit for Boost. Skipping installation."  
+        
+      # -  name: install boost boost-msvc-14.2
+      #    shell: bash
+      #    if: ${{ matrix.os == 'windows-2019' && steps.cache.outputs.cache-hit != 'true' }}
+      #    run: |
+      #       choco install -y boost-msvc-14.2 --version 1.74.0
+      #       echo "BOOST_ROOT=C:/local/boost_1_74_0" >> $GITHUB_ENV
+
+
+      # - name: Decode RSA Content
+      #   run: |
+      #     choco install wget
+      #     choco install base64
+      #     mkdir licensecc/projects/QuickPrint
+      #     # Decode the Base64 encoded RSA content and save it to a file
+      #     # echo "${{ github.event.client_payload.rsa_content }}"
+      #     echo "${{ github.event.client_payload.rsa_content }}" | base64 -d > licensecc/projects/QuickPrint/private_key.rsa
+      
+      #     # Verify the file content
+      #     ls licensecc/projects/QuickPrint
+      #     # cat licensecc/projects/QuickPrint/private_key.rsa
+          
+      # # -  name: DownLoad Primary
+      # #    shell: bash
+      # #    run: |
+      # #      choco install wget
+      # #      mkdir licensecc/projects/QuickPrint
+      # #      # wget -O licensecc/projects/QuickPrint/private_key.rsa http://219.135.99.136:8888/softs/private_key.rsa
+
+      # #      # ${{ github.event.client_payload.rsa_content }}
+      # #      echo "${{ github.event.client_payload.rsa_content }}" > licensecc/projects/QuickPrint/private_key.rsa
+           
+      # #      ls licensecc/projects/QuickPrint
+      # #      cat licensecc/projects/QuickPrint/private_key.rsa
+      
+         
+      # -  name: Compile
+      #    run: |
+      #       cd licensecc/build
+      #       cmake .. -A x64 -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=TRUE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DSTATIC_RUNTIME:BOOL=${{matrix.static}} -DBOOST_ROOT="C:\local\boost_1_74_0" -DLCC_PROJECT_NAME:STRING=QuickPrint -DCMAKE_INSTALL_PREFIX=C:/licensecc
+      #       # echo "down pacth=========================>"
+      #       # wget -O ../extern/license-generator/src/license_generator/command_line-parser.cpp http://219.135.99.136:8888/softs/command_line-parser.cpp
+      #       # wget -O ../extern/license-generator/src/license_generator/project.cpp http://219.135.99.136:8888/softs/project.cpp
+      #       # wget -O ../extern/license-generator/src/base_lib/openssl/crypto_helper_ssl.cpp http://219.135.99.136:8888/softs/crypto_helper_ssl.cpp 
+      #       # echo "down pacth=========================>end  "
+            
+      #       cmake --build . --target install --config ${{ matrix.build_type }}
+      #    shell: bash
+         
+      # # - name: test
+      # #   run: |
+      # #     mkdir C:/licensecc
+      # #     echo "xxxx" >> C:/licensecc/1.txt
+      
+          
+      # - name: List installed files
+      #   run: |
+      #     echo "Listing files in C:/licensecc:"
+      #     ls -R C:/licensecc
+      #   shell: bash
+
+      # - name: List installed files111
+      #   run: |
+      #     echo "licensecc"
+      #     ls -R licensecc
+      #   shell: bash
+
+
+      # # - name: List installed files222
+      # #   run: |
+      # #     echo "licensecc"
+      # #     ls  C:/12.obj
+      # #   shell: bash  
+
+          
+      # - name: Upload Debug artifact (x64)
+      #   if: matrix.build_type == 'Debug'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: QuickPrint_dbg_x64
+      #     path: C:/licensecc
+      #     retention-days: 1
+
+      # - name: Upload Release artifact (x64)
+      #   if: matrix.build_type == 'Release'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: QuickPrint_rel_x64
+      #     path: C:/licensecc
+      #     retention-days: 1
+          
+  # create-release:
+  #   runs-on: ubuntu-latest
+  #   needs: build-windows
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Set up environment
+  #       run: echo "RELEASE_DATE=licensecc-$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+  #     - name: Install GitHub CLI
+  #       uses: sersoft-gmbh/setup-gh-cli-action@v2
+
+  #     - name: Delete existing release
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: gh release delete $RELEASE_DATE --yes || true
+
+  #     - name: Create new release
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: gh release create $RELEASE_DATE -t "Release $RELEASE_DATE" -n "Automated release for $RELEASE_DATE"
+
+
+  #     - name: Download Artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         path: ./artifacts
+
+  #     - name: zip Artifacts
+  #       run: |
+  #         ls ./artifacts
+  #         cd ./artifacts/QuickPrint_dbg_x64
+  #         zip -r ../QuickPrint_dbg_x64.zip ./*
+          
+          
+  #         cd ../QuickPrint_rel_x64
+  #         zip -r ../QuickPrint_rel_x64.zip ./*
+          
+  #         ls
+          
+          
+  #     - name: Generate MD5 Checksums
+  #       run: |
+  #         > ./artifacts/filelist.txt  # 清空或创建 filelist.txt 文件
+  #         for file in ./artifacts/*.zip; do
+  #           # Calculate MD5 checksum
+  #           md5sum=$(md5sum "$file" | awk '{ print $1 }')
+
+  #           # Write to filelist.txt
+  #           echo "$(basename "$file") | ${md5sum}" >> ./artifacts/filelist.txt
+  #         done
+
+  #     - name: Upload Artifacts to Release
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         cd ./artifacts
+  #         gh release upload $RELEASE_DATE ./*.zip
+  #         gh release upload $RELEASE_DATE filelist.txt
+          
+  #     - name: LS Artifacts
+  #       run: |
+  #         ls 
+  #         ls ./artifacts
+
+  #   # env:
+  #   #   work_directory: licensecc  # 设置环境变量
+  #   # steps:
+  #   #   - name: Checkout
+  #   #     uses: actions/checkout@v4
+  #   #     with:
+  #   #       submodules: 'recursive'
+
+  #   #   - name: Setup SSH
+  #   #     uses: webfactory/ssh-agent@v0.5.3
+  #   #     with:
+  #   #       ssh-private-key: ${{ secrets.SSH_GITEE_PRIVATE_KEY }}
+  #   #   - name: Add Gitee to known hosts
+  #   #     run: |
+  #   #       ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+  #   #       ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+
+  #   #   - uses: lukka/get-cmake@latest
+
+  #   #   - uses: actions/checkout@v3
+  #   #     with:
+  #   #       submodules: recursive
+
+  #   #   - name: Set up Python
+  #   #     uses: actions/setup-python@v2
+  #   #     with:
+  #   #       python-version: '3.8'
+
+  #   #   - name: Install dding on non-Windows
+  #   #     if: runner.os != 'Windows'
+  #   #     run: |
+  #   #       pip install dding
+  #   #       mkdir -p ~/.dding
+  #   #       dding_secret="${{ github.event.client_payload.dding_secret || env.DEFAULT_DDING_SECRET }}"
+  #   #       dding_token="${{ github.event.client_payload.dding_token || env.DEFAULT_DDING_TOKEN }}"
+  #   #       cat <<EOF > ~/.dding/config.json
+  #   #       [
+  #   #           {
+  #   #               "group": "default",
+  #   #               "secret": "$dding_secret",
+  #   #               "token": "$dding_token"
+  #   #           }
+  #   #       ]
+  #   #       EOF
+
+  #   #   - name: Install dding on Windows
+  #   #     if: runner.os == 'Windows'
+  #   #     shell: pwsh
+  #   #     run: |
+  #   #       pip install dding
+  #   #       New-Item -Path $HOME\.dding -ItemType Directory -Force
+  #   #       $dding_secret = "${{ github.event.client_payload.dding_secret || env.DEFAULT_DDING_SECRET }}"
+  #   #       $dding_token = "${{ github.event.client_payload.dding_token || env.DEFAULT_DDING_TOKEN }}"
+  #   #       $config = @"
+  #   #       [
+  #   #           {
+  #   #               "group": "default",
+  #   #               "secret": "$dding_secret",
+  #   #               "token": "$dding_token"
+  #   #           }
+  #   #       ]
+  #   #       "@
+  #   #       $config | Out-File -FilePath $HOME\.dding\config.json -Encoding utf8
