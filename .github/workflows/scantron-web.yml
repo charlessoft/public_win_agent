@@ -37,7 +37,23 @@ jobs:
         run: |
           $env:GIT_TRACE = "1"
           git clone git@github.com:charlessoft/scantron-web.git  scantron-web
-      
+
+      - name: Install Python 2
+        run: |
+          brew install python@2
+          echo 'export PATH="/usr/local/opt/python@2/bin:$PATH"' >> ~/.bash_profile
+          source ~/.bash_profile
+          python2 --version
+
+      - name: Install Node.js v14.10.0
+        run: |
+          brew install nvm
+          echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bash_profile
+          echo '[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"' >> ~/.bash_profile
+          source ~/.bash_profile
+          nvm install 14.10.0
+          nvm use 14.10.0
+          node --version
 
            # 缓存Boost库
       # - name: Cache Boost
