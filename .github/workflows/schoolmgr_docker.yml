@@ -149,8 +149,8 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out branch
-        uses: actions/checkout@v2
+      # - name: Check out branch
+      #   uses: actions/checkout@v2
 
 
       - name: Clone schoolmgr-admin
