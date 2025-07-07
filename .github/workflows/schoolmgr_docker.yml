@@ -156,7 +156,7 @@ jobs:
       - name: Clone schoolmgr-admin
         run: |
           git clone git@gitee.com:xhp_1/schoolmgr.git ./schoolmgr
-          git clone git@gitee.com/charlesabc/myutils.git ./schoolmgr/myutils
+          git clone git@gitee.com:charlesabc/myutils.git ./schoolmgr/myutils
 
           # git clone https://oauth2:${{ secrets.GITEE_TOKEN  }}@gitee.com/xhp_1/schoolmgr.git ./schoolmgr
           # git clone https://oauth2:${{ secrets.GITEE_TOKEN  }}@gitee.com/charlesabc/myutils.git ./schoolmgr/myutils
