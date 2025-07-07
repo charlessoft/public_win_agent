@@ -46,6 +46,9 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           ssh-keyscan gitee.com >> ~/.ssh/known_hosts
 
+      - name: Setup Debug Session
+        uses: csexton/debugger-action@master
+        
       - name: Check out branch
         uses: actions/checkout@v2
 
