@@ -36,6 +36,16 @@ jobs:
       matrix:
         node-version: [18.16.0]
     steps:
+
+      - name: Set SSH
+        env:
+          KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          echo $KEY
+          mkdir -p ~/.ssh/ && echo "$KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+
       - name: Check out branch
         uses: actions/checkout@v2
 
@@ -99,14 +109,6 @@ jobs:
 
 
         
-      - name: Set SSH
-        env:
-          KEY: ${{ secrets.SSH_KEY }}
-        run: |
-          echo $KEY
-          mkdir -p ~/.ssh/ && echo "$KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
 
       # - name: Setup Debug Session
       #   uses: csexton/debugger-action@master
@@ -128,6 +130,16 @@ jobs:
       matrix:
         go-version: [1.22]
     steps:
+
+      - name: Set SSH
+        env:
+          KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          echo $KEY
+          mkdir -p ~/.ssh/ && echo "$KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+          
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v1
         with:
@@ -142,7 +154,7 @@ jobs:
         run: |
           git clone git@gitee.com:xhp_1/schoolmgr.git ./schoolmgr
           git clone git@gitee.com/charlesabc/myutils.git ./schoolmgr/myutils
-          
+
           # git clone https://oauth2:${{ secrets.GITEE_TOKEN  }}@gitee.com/xhp_1/schoolmgr.git ./schoolmgr
           # git clone https://oauth2:${{ secrets.GITEE_TOKEN  }}@gitee.com/charlesabc/myutils.git ./schoolmgr/myutils
           
